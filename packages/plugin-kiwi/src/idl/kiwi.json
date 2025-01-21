@@ -1,0 +1,326 @@
+{
+  "version": "0.1.0",
+  "name": "kiwi",
+  "instructions": [
+    {
+      "name": "configure",
+      "accounts": [
+        {
+          "name": "caller",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "config",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "usdcMint",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The USDC mint account"
+          ]
+        },
+        {
+          "name": "kwmMint",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The KWM mint account"
+          ]
+        },
+        {
+          "name": "daoKwmAccount",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The Kiwi DAO KWM token account"
+          ]
+        },
+        {
+          "name": "daoUsdcAccount",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "The Kiwi DAO USDC token account"
+          ]
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "protocolFee",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "addService",
+      "accounts": [
+        {
+          "name": "caller",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "config",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "service",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "paymentTokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "serviceEscrowAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "meta",
+          "type": "string"
+        },
+        {
+          "name": "price",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Config",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "The authority that can update the config"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "protocolFee",
+            "docs": [
+              "The fee for protocol (0.64%)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "kwmMint",
+            "docs": [
+              "The KWM mint account"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "usdcMint",
+            "docs": [
+              "The USDC mint account"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "daoKwmAccount",
+            "docs": [
+              "The Kiwi DAO KWM token account"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "daoUsdcAccount",
+            "docs": [
+              "The Kiwi DAO USDC token account"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Service",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "The authority that can update the service"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "docs": [
+              "The service name"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "meta",
+            "docs": [
+              "The service description, short metadata or IPFS link"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "price",
+            "docs": [
+              "The service price"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "paymentTokenMint",
+            "docs": [
+              "The payment token mint (0 = native SOL)"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "serviceEscrowAccount",
+            "docs": [
+              "The service token escrow account (0 = native SOL)"
+            ],
+            "type": "publicKey"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "name": "ServiceAdded",
+      "fields": [
+        {
+          "name": "service",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "authority",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "meta",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "price",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "paymentTokenMint",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "serviceEscrowAccount",
+          "type": "publicKey",
+          "index": false
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InsufficientFunds",
+      "msg": "Insufficient funds"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidMint",
+      "msg": "Invalid mint"
+    },
+    {
+      "code": 6002,
+      "name": "Overflow",
+      "msg": "Arithmetic operation overflowed"
+    },
+    {
+      "code": 6003,
+      "name": "Underflow",
+      "msg": "Arithmetic operation underflowed"
+    },
+    {
+      "code": 6004,
+      "name": "MarketClosed",
+      "msg": "Market is closed"
+    }
+  ],
+  "metadata": {
+    "address": "FzqTopUVByfT79StkitBPtd8ong3dGrqmS2TcstGaDVy"
+  }
+}
