@@ -83,18 +83,19 @@ export class KiwiProvider extends Service {
 
         elizaLogger.log("Service PDA", { servicePDA });
 
-        // const tx = await this.program.methods
-        //     .addService(name, meta, price)
-        //     .accounts({
-        //         caller: this.keypair.publicKey,
-        //         config: this.config,
-        //         service: servicePDA,
-        //         paymentTokenMint: new PublicKey(new Uint8Array(32)),
-        //     })
-        //     .signers([this.keypair])
-        //     .rpc();
+        const tx = await this.program.methods
+            .addService(name, meta, priceBN)
+            .accounts({
+                caller: this.keypair.publicKey,
+                config: this.config,
+                service: servicePDA,
+                paymentTokenMint: new PublicKey(new Uint8Array(32)),
+                serviceEscrowAccount: new PublicKey(new Uint8Array(32)),
+            })
+            .signers([this.keypair])
+            .rpc();
 
-        // elizaLogger.log("Transaction", { tx });
+        elizaLogger.log("Transaction: " + tx);
 
         return;
     }
