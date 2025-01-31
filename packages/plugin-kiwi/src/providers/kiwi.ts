@@ -14,6 +14,8 @@ import { AnchorProvider, Program, Wallet } from "@coral-xyz/anchor";
 import { getWalletKey } from "../utils";
 import { BN } from "bn.js";
 
+// const USDC_MINT = new PublicKey("HXQCaV7ehg1RNoShFyjzUdpvAGxtihK56iJn9TyFeRwW");
+
 interface KiwiService {
     name: string;
     meta: string;
@@ -65,7 +67,7 @@ export class KiwiProvider extends Service {
         // PDA seed is 32 bytes max
         // ...
         // name can be limited in storage by 64 bytes
-        // meta can be limited in storage by 256dd  bytes, respectively
+        // meta can be limited in storage by 256 bytes, respectively
 
         // but for PDA seed, we can only use 32 bytes
         // so we need to trim the name and meta to 32 bytes
@@ -76,7 +78,7 @@ export class KiwiProvider extends Service {
                 Buffer.from(name.trim().slice(0, 32)),
                 Buffer.from(meta.trim().slice(0, 32)),
                 Buffer.from(priceBN.toArray("le", 8)),
-                Buffer.from([0]),
+                // Buffer.from(Array(32).fill(0)),
             ],
             this.program.programId
         );
@@ -89,8 +91,8 @@ export class KiwiProvider extends Service {
                 caller: this.keypair.publicKey,
                 config: this.config,
                 service: servicePDA,
-                paymentTokenMint: new PublicKey(new Uint8Array(32)),
-                serviceEscrowAccount: new PublicKey(new Uint8Array(32)),
+                // paymentTokenMint: null,
+                // serviceEscrowAccount: null,
             })
             .signers([this.keypair])
             .rpc();
@@ -98,6 +100,23 @@ export class KiwiProvider extends Service {
         elizaLogger.log("Transaction: " + tx);
 
         return;
+    }
+
+    async getServices(): Promise<
+        { publicKey: PublicKey; account: { [key: string]: string | number } }[]
+    > {
+        const services = await this.program.account.service.all();
+        return services.map((service) => ({
+            publicKey: service.publicKey,
+            account: {
+                ...service.account,
+                authority: service.account.authority.toBase58(),
+                // paymentTokenMint: service.account.paymentTokenMint.toBase58(),
+                // serviceEscrowAccount:
+                //     service.account.serviceEscrowAccount.toBase58(),
+                price: service.account.price.toString(),
+            },
+        }));
     }
 }
 

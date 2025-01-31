@@ -89,16 +89,6 @@ export type Kiwi = {
           "isSigner": false
         },
         {
-          "name": "paymentTokenMint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "serviceEscrowAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
@@ -194,6 +184,30 @@ export type Kiwi = {
       }
     },
     {
+      "name": "serviceOrder",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "service",
+            "type": "publicKey"
+          },
+          {
+            "name": "buyer",
+            "type": "publicKey"
+          },
+          {
+            "name": "price",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
       "name": "service",
       "type": {
         "kind": "struct",
@@ -225,20 +239,6 @@ export type Kiwi = {
               "The service price"
             ],
             "type": "u64"
-          },
-          {
-            "name": "paymentTokenMint",
-            "docs": [
-              "The payment token mint (0 = native SOL)"
-            ],
-            "type": "publicKey"
-          },
-          {
-            "name": "serviceEscrowAccount",
-            "docs": [
-              "The service token escrow account (0 = native SOL)"
-            ],
-            "type": "publicKey"
           },
           {
             "name": "bump",
@@ -279,16 +279,6 @@ export type Kiwi = {
           "name": "price",
           "type": "u64",
           "index": false
-        },
-        {
-          "name": "paymentTokenMint",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "serviceEscrowAccount",
-          "type": "publicKey",
-          "index": false
         }
       ]
     }
@@ -318,6 +308,16 @@ export type Kiwi = {
       "code": 6004,
       "name": "MarketClosed",
       "msg": "Market is closed"
+    },
+    {
+      "code": 6005,
+      "name": "NameTooLong",
+      "msg": "Name too long"
+    },
+    {
+      "code": 6006,
+      "name": "MetaTooLong",
+      "msg": "Meta too long"
     }
   ]
 };
@@ -413,16 +413,6 @@ export const IDL: Kiwi = {
           "isSigner": false
         },
         {
-          "name": "paymentTokenMint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "serviceEscrowAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
@@ -518,6 +508,30 @@ export const IDL: Kiwi = {
       }
     },
     {
+      "name": "serviceOrder",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "service",
+            "type": "publicKey"
+          },
+          {
+            "name": "buyer",
+            "type": "publicKey"
+          },
+          {
+            "name": "price",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
       "name": "service",
       "type": {
         "kind": "struct",
@@ -549,20 +563,6 @@ export const IDL: Kiwi = {
               "The service price"
             ],
             "type": "u64"
-          },
-          {
-            "name": "paymentTokenMint",
-            "docs": [
-              "The payment token mint (0 = native SOL)"
-            ],
-            "type": "publicKey"
-          },
-          {
-            "name": "serviceEscrowAccount",
-            "docs": [
-              "The service token escrow account (0 = native SOL)"
-            ],
-            "type": "publicKey"
           },
           {
             "name": "bump",
@@ -603,16 +603,6 @@ export const IDL: Kiwi = {
           "name": "price",
           "type": "u64",
           "index": false
-        },
-        {
-          "name": "paymentTokenMint",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "serviceEscrowAccount",
-          "type": "publicKey",
-          "index": false
         }
       ]
     }
@@ -642,6 +632,16 @@ export const IDL: Kiwi = {
       "code": 6004,
       "name": "MarketClosed",
       "msg": "Market is closed"
+    },
+    {
+      "code": 6005,
+      "name": "NameTooLong",
+      "msg": "Name too long"
+    },
+    {
+      "code": 6006,
+      "name": "MetaTooLong",
+      "msg": "Meta too long"
     }
   ]
 };

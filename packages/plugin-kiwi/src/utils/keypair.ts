@@ -16,8 +16,6 @@ export async function getWalletKey(
     runtime: IAgentRuntime
 ): Promise<KeypairResult> {
     const privateKeyString = runtime.getSetting("SOLANA_PRIVATE_KEY");
-    elizaLogger.log("privateKeyString", privateKeyString);
-
     if (!privateKeyString) {
         throw new Error("Private key not found in settings");
     }
@@ -26,7 +24,6 @@ export async function getWalletKey(
         // First try base58
         const secretKey = bs58.decode(privateKeyString);
         const keypair = Keypair.fromSecretKey(secretKey);
-        elizaLogger.log("keypair", keypair.publicKey.toBase58());
         return {
             keypair: Keypair.fromSecretKey(secretKey),
             publicKey: keypair.publicKey,
@@ -40,7 +37,6 @@ export async function getWalletKey(
                 Buffer.from(privateKeyString, "base64")
             );
             const keypair = Keypair.fromSecretKey(secretKey);
-            elizaLogger.log("keypair", keypair.publicKey.toBase58());
             return {
                 keypair: Keypair.fromSecretKey(secretKey),
                 publicKey: keypair.publicKey,

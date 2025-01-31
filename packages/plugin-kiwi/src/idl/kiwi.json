@@ -89,16 +89,6 @@
           "isSigner": false
         },
         {
-          "name": "paymentTokenMint",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "serviceEscrowAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
@@ -194,6 +184,30 @@
       }
     },
     {
+      "name": "ServiceOrder",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "service",
+            "type": "publicKey"
+          },
+          {
+            "name": "buyer",
+            "type": "publicKey"
+          },
+          {
+            "name": "price",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
       "name": "Service",
       "type": {
         "kind": "struct",
@@ -225,20 +239,6 @@
               "The service price"
             ],
             "type": "u64"
-          },
-          {
-            "name": "paymentTokenMint",
-            "docs": [
-              "The payment token mint (0 = native SOL)"
-            ],
-            "type": "publicKey"
-          },
-          {
-            "name": "serviceEscrowAccount",
-            "docs": [
-              "The service token escrow account (0 = native SOL)"
-            ],
-            "type": "publicKey"
           },
           {
             "name": "bump",
@@ -279,16 +279,6 @@
           "name": "price",
           "type": "u64",
           "index": false
-        },
-        {
-          "name": "paymentTokenMint",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "serviceEscrowAccount",
-          "type": "publicKey",
-          "index": false
         }
       ]
     }
@@ -318,9 +308,19 @@
       "code": 6004,
       "name": "MarketClosed",
       "msg": "Market is closed"
+    },
+    {
+      "code": 6005,
+      "name": "NameTooLong",
+      "msg": "Name too long"
+    },
+    {
+      "code": 6006,
+      "name": "MetaTooLong",
+      "msg": "Meta too long"
     }
   ],
   "metadata": {
-    "address": "FzqTopUVByfT79StkitBPtd8ong3dGrqmS2TcstGaDVy"
+    "address": "9WV2AszpVhHAKijN2GE6jcGfz2BiCfp35W3UBkKEp5YE"
   }
 }

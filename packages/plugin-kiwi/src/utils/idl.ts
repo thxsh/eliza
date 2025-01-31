@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 
 const PROGRAM_ID = new PublicKey(
-    "FzqTopUVByfT79StkitBPtd8ong3dGrqmS2TcstGaDVy"
+    "9WV2AszpVhHAKijN2GE6jcGfz2BiCfp35W3UBkKEp5YE"
 );
 
 // helper function to get the IDL

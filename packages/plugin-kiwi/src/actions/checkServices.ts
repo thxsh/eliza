@@ -9,55 +9,49 @@ import {
     composeContext,
     generateObjectDeprecated,
     ModelClass,
+    UUID,
 } from "@elizaos/core";
+import { v4 } from "uuid";
 import { WalletProvider, walletProvider } from "../providers/wallet";
 import { kiwiProvider, KiwiProvider } from "../providers/kiwi";
 // import { Connection, PublicKey } from "@solana/web3.js";
-
-const addServiceTemplate = `Respond with a JSON object containing only the required values.
+const checkServicesTemplate = `Respond with a JSON object containing only the required values.
 
 Example response:
 \`\`\`json
 {
-    "name": "Software Development",
-    "meta": "Software development services that are performed in accordance tot the latest industry standards.",
-    "price": "1000000",
-    "currency": "SOL",
+    "service": "A7bZNLKxgamoKSgWWMFXRrzQXdjB1nJuLxhd2dy26krt"
 }
 \`\`\`
 
 
-Given your bio and your intentions, compose a service description, price and currency:
+Given your bio and your intentions, determine if you want to buy any of the services listed on kiwi.markets.
 
-{{bio}}
+Bio: {{bio}}
+
+Services: {{services}}
 
 Following information is required to add the service to kiwi.markets:
-- Name of the service
-- Meta of the service
-- Price of the service (Determine the price in chosen currency, consider decimals and provide full number as string)
-- Currency of the service
+- Solana public key of the service from the provided list of services
 
 Respond with a JSON markdown block containing only the extracted values. Use null for any values that cannot be determined. The result should be a valid JSON object with the following schema:
 \`\`\`json
 {
-    "name": string,
-    "meta": string,
-    "price": string,
-    "currency": string
+    "service": string | null
 }
 \`\`\``;
 
-// swapToken should took CA, not symbol
-
-export const addService: Action = {
-    name: "ADD_SERVICE",
-    similes: ["ADD_SERVICE", "LIST_SERVICE"],
+// Check out all services on kiwi.markets
+export const checkServices: Action = {
+    name: "CHECK_SERVICES",
+    similes: ["CHECK_SERVICES", "SEARCH_SERVICES"],
     validate: async (runtime: IAgentRuntime, message: Memory) => {
         // Check if the necessary parameters are provided in the message
         elizaLogger.log("Message:", message);
         return true;
     },
-    description: "List services on kiwi.markets",
+    description:
+        "Chech out all services on kiwi.markets and determine if you want to buy any of them",
     handler: async (
         runtime: IAgentRuntime,
         message: Memory,
@@ -79,39 +73,53 @@ export const addService: Action = {
         );
 
         const balance = await wallet.getSolBalance();
-
         elizaLogger.log("Balance:", balance);
-
-        const addServiceContext = composeContext({
-            state,
-            template: addServiceTemplate,
-        });
-        elizaLogger.log("addServiceContext", addServiceContext);
-
-        const addServiceParams = await generateObjectDeprecated({
-            runtime,
-            context: addServiceContext,
-            modelClass: ModelClass.LARGE,
-        });
-        elizaLogger.log("addServiceParams", addServiceParams);
-
-        const name = addServiceParams.name;
-        const meta = addServiceParams.meta;
-        const price = addServiceParams.price;
-        const currency = addServiceParams.currency;
-
-        elizaLogger.log("addServiceParams.name", name);
-        elizaLogger.log("addServiceParams.meta", meta);
-        elizaLogger.log("addServiceParams.price", price);
-        elizaLogger.log("addServiceParams.currency", currency);
 
         const kiwi: KiwiProvider = await kiwiProvider.get(
             runtime,
             message,
             state
         );
-        const tx = await kiwi.addService({ name, meta, price, currency });
-        elizaLogger.log("Transaction other", JSON.stringify(tx, null, 2));
+
+        const services = await kiwi.getServices();
+        elizaLogger.log("Services:", JSON.stringify(services, null, 2));
+
+        const memoryId = v4() as UUID;
+
+        await runtime.messageManager.createMemory({
+            id: memoryId,
+            agentId: message.agentId,
+            roomId: message.roomId,
+            userId: message.userId,
+            content: {
+                text: JSON.stringify(services),
+            },
+        });
+
+        const memory = await runtime.messageManager.getMemoryById(memoryId);
+        elizaLogger.log("Memory:", memory);
+
+        state.services = JSON.stringify(services, null, 2);
+        const checkServicesContext = composeContext({
+            state,
+            template: checkServicesTemplate,
+        });
+        elizaLogger.log("checkServicesContext", checkServicesContext);
+
+        const checkServicesParams = await generateObjectDeprecated({
+            runtime,
+            context: checkServicesContext,
+            modelClass: ModelClass.MEDIUM,
+        });
+        elizaLogger.log("checkServicesParams", checkServicesParams);
+
+        const service = checkServicesParams.service;
+        elizaLogger.log("service", service);
+
+        // TODO >> Buy service if its not null
+        if (service) {
+            elizaLogger.log("[TODO] Buying service:", service);
+        }
 
         return true;
     },
@@ -120,14 +128,14 @@ export const addService: Action = {
             {
                 user: "{{user1}}",
                 content: {
-                    text: "Have you heard it? You can list your services on kiwi.markets and get paid in on chain. I already listed couple of services and got some traction!",
+                    text: "Have you checked out kiwi.markets? I want to buy a service from there. There are a lot of services to choose from and maybe I can find something useful for me.",
                 },
             },
             {
                 user: "{{user2}}",
                 content: {
-                    text: "I might also want to list my services on kiwi.markets. I want to offer my expertise and get paid too...",
-                    action: "ADD_SERVICE",
+                    text: "I might also want to check out what services are listed on kiwi.markets. I never know if I need something untill I see it...",
+                    action: "CHECK_SERVICES",
                 },
             },
             // {
